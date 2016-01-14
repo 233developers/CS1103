@@ -9,9 +9,9 @@ import java.util.*;
  * 
  * Sample times:
  * 
- * Sort Method		Size_1000	Size_10000	Size_100000
+ * Sort Method	      Size_1000	  Size_10000   Size_100000
  * 
- * Insertion sort     0.001		  0.058        5.812
+ * Insertion sort     0.001	  0.058        5.812
  * Selection sort     0.002       0.095        9.813
  * Arrays.sort        0.001       0.004        0.017
  * 
