@@ -1,0 +1,206 @@
+
+<html>
+<head>
+<title>CPSC 225, Spring 2009, Lab 9</title>
+</head>
+<body style="margin-left: 1cm; margin-right: 1cm; max-width: 700px">
+
+<hr>
+<h2>CPSC 225, Spring 2009<br>
+Lab 9: Sets in the Java Collection Framework</h2>
+<hr>
+
+<p>For this week's lab, you will use two of the classes in the
+Java Collection Framework: <i>HashSet</i> and <i>TreeSet</i>.
+You will use these classes to implement a spell checker.</p>
+
+<p><b>This lab is due at the time of the next lab, next Tuesday,
+March 31.</b>  Please copy your work into the homework directory by
+that time.</p>
+
+<p><b>Your work from labs 6, 7, and 8 is due this week.</b>  I will not look
+for this work until this weekend.  Make sure that it is done before
+Saturday morning.  You should have a working genetic programming project,
+including the work that you did for both Lab 6 and Lab 7.
+<b>I will look for this work in the CVS repository that you created
+for Lab 8.</b>  You should also have a written report on your work 
+with the debugger in Lab 8, which you can turn in in class (or let me 
+know exactly where I can find it).</p>
+
+<hr>
+
+<h3>Set Methods</h3>
+
+<p>For this lab, you will need to use some of the methods that are defined
+in the <i>Set</i> interface.  Recall that if <i>set</i> is a <i>Set</i>, then
+the following methods are defined:</p>
+
+<ul>
+<li><b>set.size()</b> -- Returns the number of items in the set.</li>
+<li><b>set.add(item)</b> -- Adds the item to the set, if it is not already there.</li>
+<li><b>set.contains(item)</b> -- Check whether the set contains the item.</li>
+<li><b>set.isEmpty()</b> -- Check whether the set is empty.</li>
+</ul>
+
+<p>You will also need to be able to traverse a set, using either an iterator
+or a for-each loop.</p>
+
+<hr>
+
+<h3>Reading a Dictionary</h3>
+
+<p>The file <i><a href="words.txt">/classes/s09/cs225/words.txt</a></i> contains
+a list of English words, with one word on each line.  You will look up words in 
+this list to check whether they are correctly spelled.  To make the list
+easy to use, you can store the words in a set.  Since there is no need to have
+the words stored in order, you can use a <i>HashSet</i> for maximum efficiency.</p>
+
+<p>Use a <i>Scanner</i> to read the file.  Recall that you can create a scanner, <i>filein</i>,
+for reading from a file with a statement such as:</p>
+
+<pre>
+          filein = new Scanner(new File("/classes/s09/cs225/words.txt"));
+</pre>
+
+<p>and that a file can be processed, token by token, in a loop such as:</p>
+
+<pre>
+          while (filein.hasNext()) {
+              String tk = filein.next();
+              process(tk);  // do something with the token
+          }
+</pre>
+
+<p>(For the wordlist file, a token is simply a word.)</p>
+
+<p>Start your main program by reading the words from <i>/classes/s09/cs225/words.txt</i>
+and storing them in a <i>HashSet</i>&lt;<i>String</i>&gt;.  For the purposes of this
+program, <b>convert all words to lower case</b> before putting them in the set.
+To make sure that you've read all the words,
+check the size of the set.  (It should be 73845.)  You could also use the
+<i>contains</i> method to check for the presence of some common word in the set.</p>
+
+<hr>
+
+<h3>Checking the Words in a File</h3>
+
+<p>Once you have the list of words in a set, it's easy to read the words
+from a file and check whether each word is in the set.  Start by letting the
+user select a file.  You can either let the user type the name of the file
+or you can use the following method:</p>
+
+<pre>
+         /**
+          * Lets the user select an input file using a standard file
+          * selection dialog box.  If the user cancels the dialog without
+          * selecting a file, the return value is null.
+          */
+         static File getInputFileNameFromUser() {
+            JFileChooser fileDialog = new JFileChooser();
+            fileDialog.setDialogTitle("Select File for Input");
+            int option = fileDialog.showOpenDialog(null);
+            if (option != JFileChooser.APPROVE_OPTION)
+               return null;
+            else
+               return fileDialog.getSelectedFile();
+         }
+</pre>
+
+<p>Use a <i>Scanner</i> to read the words from the selected file.  In order to
+skip over any non-letter characters in the file, you can use the following
+command just after creating the scanner (where <i>in</i> is the variable name
+for the scanner):</p>
+
+<pre>
+          in.useDelimiter("[^a-zA-Z]+");
+</pre>
+
+<p>(In this statement, "[^a-zA-Z]+" is a <i>regular expression</i> that matches any
+sequence of one or more non-letter characters.  This essentially makes the scanner
+treat any non-letter the way it would ordinarily treat a space.)</p>
+
+<p>You can then go through the file, read each word (converting it to lower case)
+and check whether the set contains the word.  At this point, just print out any 
+word that you find that is not in the dictionary.</p>
+
+<hr>
+
+<h3>Providing a List of Possible Correct Spellings</h3>
+
+<p>A spell checker shouldn't just tell you what words are misspelled -- it should also
+give you a list of possible correct spellings for that word.  Write a method</p>
+
+<pre>
+          static TreeSet<String> corrections(String badWord, HashSet<String> dictionary)
+</pre>
+
+<p>that creates and returns a <i>TreeSet</i>&lt;<i>String</i>&gt; containing
+variations on <i>badWord</i> that are contained in the <i>dictionary</i>.  In your
+main program, when you find a word that is not in the set of legal words, pass that word to this
+method (along with the set).  Take the return value and output any words that
+it contains; these are the suggested correct spellings of the misspelled word.  Here for example
+is part of the output from my program when it was run with the HTML source of this
+page as input:</p>
+
+<pre>
+   html: (no suggestions)
+   cpsc: (no suggestions)
+   hashset: hash set
+   treeset: tree set
+   cvs: cs, vs
+   isempty: is empty
+   href: ref
+   txt: tat, tet, text, tit, tot, tut
+   filein: file in
+   pre: are, ere, ire, ore, pare, pee, per, pie, poe, pore, prep, pres, prey, pro, pry, pure, pyre, re
+   hasnext: has next
+   wordlist: word list
+   getinputfilenamefromuser: (no suggestions)
+   jfilechooser: (no suggestions)
+   filedialog: file dialog
+   setdialogtitle: (no suggestions)
+   int: ant, dint, hint, in, ina, inc, ind, ink, inn, ins, inti, into, it, lint, mint, nit, pint, tint
+</pre>
+
+<p>Note that I have written my program so that it will not output the same misspelled
+word more than once.  (I do this by keeping a set of misspelled words that have been
+output.)  If my <i>corrections()</i> method returns an empty set, I output the
+message "(no suggestions)".  Since the corrections are stored in a tree set, they
+are automatically printed out in alphabetical order with no repeats.</p>
+
+<p>The possible corrections that I consider are as follows:</p>
+
+<ul>
+<li>Delete any one of the letters from the misspelled word.</li>
+<li>Change any letter in the misspelled word to any other letter.</li>
+<li>Insert any letter at any point in the misspelled word.</li>
+<li>Swap any two neighboring characters in the misspelled word.</li>
+<li>Insert a space at any point in the misspelled word (and check that <i>both</i> of
+the words that are produced are in the dictionary)</li>
+</ul>
+
+<p>For constructing the possible corrections, you will have to make extensive use
+of substrings.  If <i>w</i> is a string, then <i>w.substring(0,i)</i>
+is the string consisting of the first <i>i</i> characters in <i>w</i> (<b>not</b>
+including the character in position <i>i</i>, which would be character number <i>i+1</i>).
+And <i>w.substring(i)</i> consists of the characters of <i>w</i> from position <i>i</i>
+through the end of the string.  For example, if <i>ch</i> is a character, then you
+can change the <i>i</i>-th character of <i>w</i> to <i>ch</i> with the statement:</p>
+
+<pre>
+          String s = w.substring(0,i) + ch + w.substring(i+1);
+</pre>
+
+<p>Also, you will find it convenient to use a <i>for</i> loop in which the loop
+control variable is a <i>char</i>:</p>
+
+<pre>
+          for (char ch = 'a'; ch &lt;= 'z'; ch++) { ...
+</pre>
+
+<hr>
+<div align=right><small>
+<a href="http://math.hws.edu/eck">David Eck</a>, for <a href="../../index.html">CPSC 225</a>
+</small></div>
+</body>
+</html>
