@@ -15,7 +15,7 @@ import javax.swing.JFileChooser;
  * If a word in the spell checked file is not found in the dictionary, the
  * program provides suggestions for possible correct spellings.
  * 
- * @author A.Nonymous
+ * @author Ryan Coon
  */
 public class SpellChecker {
 
